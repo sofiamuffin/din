@@ -1,266 +1,119 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title id="pageTitle">Доступ до посилання</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open in browser</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      background: #fff;
-      padding: 30px 20px;
-      border-radius: 16px;
-      max-width: 400px;
-      width: 90%;
+      justify-content: center;
+      background: linear-gradient(135deg, #000000, #1f1f1f);
+      color: white;
+      padding: 20px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      animation: fadeIn 0.6s ease;
     }
-
-    h1 {
-      font-size: 22px;
-      margin-bottom: 20px;
-      line-height: 1.4;
+    .card {
+      max-width: 460px;
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      position: relative;
+      overflow: hidden;
     }
-
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin: 20px 0;
-      text-align: left;
-      animation: slideUp 0.5s ease;
-    }
-
-    .icon {
-      width: 40px;
-      height: 40px;
-      background: #ffe6ec;
+    h1 { font-size: 30px; margin-bottom: 16px; }
+    p { font-size: 18px; line-height: 1.5; opacity: .95; }
+    .steps { margin-top: 24px; text-align: left; font-size: 20px; line-height: 1.9; }
+    .icon { font-size: 54px; margin-bottom: 20px; }
+    .loader {
+      margin: 24px auto 0;
+      width: 42px; height: 42px;
+      border: 4px solid rgba(255,255,255,.25);
+      border-top-color: white;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      animation: pulse 1.5s infinite;
-    }
-
-    .text {
-      font-size: 14px;
-      color: #333;
-    }
-
-    #openBtnWrapper {
-      margin-top: 20px;
+      animation: spin 1s linear infinite;
       display: none;
     }
-
-    button {
-      padding: 14px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      background: #ff4d6d;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      animation: pulse 1.5s infinite;
+    
+    @keyframes spin { to { transform: rotate(360deg);} }
+    
+      70% { transform: scale(1.15); box-shadow: 0 0 0 22px rgba(255,51,85,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,51,85,0); }
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-      100% { transform: scale(1); }
+      50% { transform: translate(-8px,8px) scale(1.15); }
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <h1 id="title"></h1>
-
-  <div class="step">
-    <div class="icon">👆</div>
-    <div class="text" id="step1"></div>
+  <div class="card">
+    
+    <div class="icon">↗️</div>
+    <h1 id="title"></h1>
+    <p id="desc"></p>
+    <div class="steps" id="steps"></div>
+    <div class="loader" id="loader"></div>
   </div>
-
-  <div class="step">
-    <div class="icon">🌐</div>
-    <div class="text" id="step2"></div>
-  </div>
-
-  <div id="openBtnWrapper">
-    <button id="btn" onclick="goToOffer()"></button>
-  </div>
-</div>
 
 <script>
-  const REDIRECT_URL = 'https://tone.affomelody.com/click?pid=122199&offer_id=25&sub1=Di1';
+const REDIRECT_URL = 'https://tone.affomelody.com/click?pid=122199&offer_id=25&sub1=Di1';
 
-  const translations = {
-    en: {
-      title: "To access the link,<br>follow these<br>2 simple steps:",
-      step1: 'Tap the "..." menu<br>in the top right corner',
-      step2: 'Select "Open in browser"',
-      btn: "I opened it in browser",
-      pageTitle: "Access to the link"
-    },
-    de: {
-      title: "Um auf den Link zuzugreifen,<br>folgen Sie diesen<br>2 einfachen Schritten:",
-      step1: 'Tippen Sie auf das "..." Menü<br>oben rechts',
-      step2: 'Wählen Sie "Im Browser öffnen"',
-      btn: "Ich habe es im Browser geöffnet",
-      pageTitle: "Zugriff auf den Link"
-    },
-    uk: {
-      title: "Щоб отримати доступ до посилання,<br>виконайте наступні<br>2 прості кроки:",
-      step1: 'Натисніть на меню "..."<br>у правому верхньому куті',
-      step2: 'Оберіть "Відкрити в браузері"',
-      btn: "Я відкрив у браузері",
-      pageTitle: "Доступ до посилання"
-    },
-    pl: {
-      title: "Aby uzyskać dostęp do linku,<br>wykonaj te<br>2 proste kroki:",
-      step1: 'Kliknij menu "..."<br>w prawym górnym rogu',
-      step2: 'Wybierz "Otwórz w przeglądarce"',
-      btn: "Otworzyłem w przeglądarce",
-      pageTitle: "Dostęp do linku"
-    },
-    fr: {
-      title: "Pour accéder au lien,<br>suivez ces<br>2 étapes simples :",
-      step1: 'Appuyez sur le menu "..."<br>en haut à droite',
-      step2: 'Sélectionnez "Ouvrir dans le navigateur"',
-      btn: "Je l’ai ouvert dans le navigateur",
-      pageTitle: "Accès au lien"
-    },
-    it: {
-      title: "Per accedere al link,<br>segui questi<br>2 semplici passaggi:",
-      step1: 'Tocca il menu "..."<br>in alto a destra',
-      step2: 'Seleziona "Apri nel browser"',
-      btn: "L’ho aperto nel browser",
-      pageTitle: "Accesso al link"
-    },
-    es: {
-      title: "Para acceder al enlace,<br>sigue estos<br>2 simples pasos:",
-      step1: 'Toca el menú "..."<br>en la esquina superior derecha',
-      step2: 'Selecciona "Abrir en el navegador"',
-      btn: "Lo abrí en el navegador",
-      pageTitle: "Acceso al enlace"
-    },
-    pt: {
-      title: "Para acessar o link,<br>siga estes<br>2 passos simples:",
-      step1: 'Toque no menu "..."<br>no canto superior direito',
-      step2: 'Selecione "Abrir no navegador"',
-      btn: "Abri no navegador",
-      pageTitle: "Acesso ao link"
-    },
-    nl: {
-      title: "Om toegang te krijgen tot de link,<br>volg deze<br>2 eenvoudige stappen:",
-      step1: 'Tik op het menu "..."<br>rechtsboven',
-      step2: 'Selecteer "Openen in browser"',
-      btn: "Ik heb het in de browser geopend",
-      pageTitle: "Toegang tot de link"
-    },
-    sv: {
-      title: "För att få tillgång till länken,<br>följ dessa<br>2 enkla steg:",
-      step1: 'Tryck på menyn "..."<br>uppe till höger',
-      step2: 'Välj "Öppna i webbläsaren"',
-      btn: "Jag öppnade i webbläsaren",
-      pageTitle: "Tillgång till länken"
-    },
-    no: {
-      title: "For å få tilgang til lenken,<br>følg disse<br>2 enkle trinnene:",
-      step1: 'Trykk på "..." menyen<br>øverst til høyre',
-      step2: 'Velg "Åpne i nettleser"',
-      btn: "Jeg åpnet i nettleser",
-      pageTitle: "Tilgang til lenken"
-    },
-    da: {
-      title: "For at få adgang til linket,<br>følg disse<br>2 enkle trin:",
-      step1: 'Tryk på menuen "..."<br>øverst til højre',
-      step2: 'Vælg "Åbn i browser"',
-      btn: "Jeg åbnede i browser",
-      pageTitle: "Adgang til link"
-    },
-    fi: {
-      title: "Päästäksesi linkkiin,<br>noudata näitä<br>2 yksinkertaista vaihetta:",
-      step1: 'Napauta "..." valikkoa<br>yläkulmassa',
-      step2: 'Valitse "Avaa selaimessa"',
-      btn: "Avasin selaimessa",
-      pageTitle: "Pääsy linkkiin"
-    },
-    cs: {
-      title: "Pro přístup k odkazu,<br>postupujte podle těchto<br>2 jednoduchých kroků:",
-      step1: 'Klikněte na menu "..."<br>vpravo nahoře',
-      step2: 'Vyberte "Otevřít v prohlížeči"',
-      btn: "Otevřel jsem v prohlížeči",
-      pageTitle: "Přístup k odkazu"
-    },
-    tr: {
-      title: "Bağlantıya erişmek için,<br>şu<br>2 basit adımı izleyin:",
-      step1: '"..." menüsüne dokunun<br>sağ üst köşede',
-      step2: '"Tarayıcıda aç" seçin',
-      btn: "Tarayıcıda açtım",
-      pageTitle: "Bağlantıya erişim"
-    }
-  };
+const i18n = {
+  en:{t:'Open in browser',d:'To continue, open this link in your external browser.',s:['Tap ⋯ in the top-right corner','Choose "Open in browser"','Wait for automatic redirect']},
+  uk:{t:'Відкрий у браузері',d:'Щоб продовжити, відкрий це посилання у зовнішньому браузері.',s:['Натисни ⋯ у верхньому правому куті','Обери "Відкрити у браузері"','Зачекай автоматичний перехід']},
+  de:{t:'Im Browser öffnen',d:'Öffne diesen Link im externen Browser.',s:['Tippe auf ⋯ oben rechts','Wähle „Im Browser öffnen“','Warte auf die automatische Weiterleitung']},
+  pl:{t:'Otwórz w przeglądarce',d:'Aby kontynuować, otwórz link w zewnętrznej przeglądarce.',s:['Kliknij ⋯ w prawym górnym rogu','Wybierz „Otwórz w przeglądarce”','Poczekaj na przekierowanie']},
+  fr:{t:'Ouvrir dans le navigateur',d:'Ouvrez ce lien dans votre navigateur externe.',s:['Appuyez sur ⋯ en haut à droite','Choisissez « Ouvrir dans le navigateur »','Attendez la redirection']},
+  da:{t:'Åbn i browser',d:'Åbn dette link i din eksterne browser.',s:['Tryk på ⋯ øverst til højre','Vælg "Åbn i browser"','Vent på viderestilling']},
+  no:{t:'Åpne i nettleser',d:'Åpne denne lenken i ekstern nettleser.',s:['Trykk på ⋯ øverst til høyre','Velg "Åpne i nettleser"','Vent på videresending']},
+  nl:{t:'Open in browser',d:'Open deze link in je externe browser.',s:['Tik op ⋯ rechtsboven','Kies "Open in browser"','Wacht op redirect']},
+  sv:{t:'Öppna i webbläsare',d:'Öppna länken i extern webbläsare.',s:['Tryck på ⋯ uppe till höger','Välj "Öppna i webbläsare"','Vänta på omdirigering']},
+  et:{t:'Ava brauseris',d:'Ava see link välises brauseris.',s:['Vajuta ⋯ paremas ülanurgas','Vali "Ava brauseris"','Oota ümbersuunamist']},
+  it:{t:'Apri nel browser',d:'Apri questo link nel browser esterno.',s:['Tocca ⋯ in alto a destra','Scegli "Apri nel browser"','Attendi il reindirizzamento']},
+  es:{t:'Abrir en navegador',d:'Abre este enlace en tu navegador externo.',s:['Pulsa ⋯ arriba a la derecha','Elige "Abrir en navegador"','Espera la redirección']},
+  'de-ch':{t:'Im Browser öffnen',d:'Öffne diesen Link im externen Browser.',s:['Tippe auf ⋯ oben rechts','Wähle „Im Browser öffnen“','Warte auf die automatische Weiterleitung']}
+};
 
-  function detectLanguage() {
-    const lang = (navigator.language || "").toLowerCase();
-    const short = lang.split("-")[0];
+function detectLang(){
+  let l=(navigator.language||'en').toLowerCase();
+  if(l.startsWith('de-ch')) return 'de-ch';
+  let code=l.split('-')[0];
+  return i18n[code] ? code : 'en';
+}
 
-    if (translations[short]) return short;
+function applyLang(){
+  const lang = detectLang();
+  const tr=i18n[lang];
+  document.documentElement.lang = lang;
+  document.title = tr.t;
+  document.getElementById('title').innerText = tr.t;
+  document.getElementById('desc').innerText = tr.d;
+  document.getElementById('steps').innerHTML = `1. ${tr.s[0]}<br>2. ${tr.s[1]}<br>3. ${tr.s[2]}`;
+}
 
-    return "en"; // ✅ дефолт тепер англійська
-  }
+function isTikTokWebView(){
+  const ua=navigator.userAgent||'';
+  return /TikTok|musical_ly|BytedanceWebview/i.test(ua);
+}
 
-  function applyTranslations() {
-    const lang = detectLanguage();
-    const t = translations[lang];
+function redirectNow(){
+  document.getElementById('title').innerText='Redirecting...';
+  document.getElementById('desc').innerText='Opening destination...';
+  document.getElementById('steps').style.display='none';
+  
+  document.getElementById('loader').style.display='block';
+  setTimeout(()=>window.location.replace(REDIRECT_URL),800);
+}
 
-    document.getElementById("title").innerHTML = t.title;
-    document.getElementById("step1").innerHTML = t.step1;
-    document.getElementById("step2").innerHTML = t.step2;
-    document.getElementById("btn").innerText = t.btn;
-    document.getElementById("pageTitle").innerText = t.pageTitle;
-  }
-
-  function goToOffer() {
-    window.location.href = REDIRECT_URL;
-  }
-
-  function isInAppBrowser() {
-    const ua = navigator.userAgent || "";
-    return /TikTok|BytedanceWebview|Instagram|FBAN|FBAV|WebView|wv/i.test(ua);
-  }
-
-  applyTranslations();
-
-  if (!isInAppBrowser()) {
-    setTimeout(() => {
-      document.getElementById("openBtnWrapper").style.display = "block";
-    }, 1200);
-  }
+applyLang();
+if(!isTikTokWebView()) redirectNow();
 </script>
-
 </body>
 </html>
